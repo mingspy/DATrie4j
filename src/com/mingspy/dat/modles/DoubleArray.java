@@ -40,6 +40,7 @@ public class DoubleArray<V> implements Serializable {
 	}
 
 	public void init() {
+
 		base = new int[DA_POOL_BEGIN];
 		check = new int[DA_POOL_BEGIN];
 		//data = new Object[DA_POOL_BEGIN];
@@ -94,8 +95,8 @@ public class DoubleArray<V> implements Serializable {
 	 * @return
 	 */
 	public boolean walk(Integer s, int c) {
-		int next;
-		next = getBase(s) + c;
+
+		int next = getBase(s) + c;
 		if (getCheck(next) == s) {
 			s = next;
 			return true;
@@ -105,10 +106,8 @@ public class DoubleArray<V> implements Serializable {
 
 	private void allocCell(int index) {
 
-		int prev, next;
-
-		prev = -getBase(index);
-		next = -getCheck(index);
+		int prev = -getBase(index);
+		int next = -getCheck(index);
 
 		/* remove the cell from free list */
 		setCheck(prev, -next);
@@ -117,14 +116,12 @@ public class DoubleArray<V> implements Serializable {
 	}
 
 	private void freeCell(int cell) {
-		int i, prev;
 
 		/* find insertion point */
-		i = -getCheck(FREE_LIST_HEAD);
+		int i = -getCheck(FREE_LIST_HEAD);
 		while (i != FREE_LIST_HEAD && i < cell)
 			i = -getCheck(i);
-
-		prev = -getBase(i);
+		int prev = -getBase(i);
 
 		/* insert cell before i */
 		setCheck(cell, -i);
@@ -134,28 +131,25 @@ public class DoubleArray<V> implements Serializable {
 	}
 
 	private boolean extendPool(int to_index) {
-		int new_begin;
-		int i;
-		int free_tail;
 
 		if (to_index <= 0 || TRIE_INDEX_MAX <= to_index)
 			return false;
 
 		if (to_index < base.length)
 			return true;
-		new_begin = base.length;
+		int new_begin = base.length;
 		base = Arrays.copyOf(base, to_index + 1);
 		check = Arrays.copyOf(check, to_index + 1);
 		//data = Arrays.copyOf(data, to_index + 1);
 
 		/* initialize new free list */
-		for (i = new_begin; i < to_index; i++) {
+		for (int i = new_begin; i < to_index; i++) {
 			setCheck(i, -(i + 1));
 			setBase(i + 1, -i);
 		}
 
 		/* merge the new circular list to the old */
-		free_tail = -getBase(FREE_LIST_HEAD);
+		int free_tail = -getBase(FREE_LIST_HEAD);
 		setCheck(free_tail, -new_begin);
 		setBase(new_begin, -free_tail);
 		setCheck(to_index, -FREE_LIST_HEAD);
@@ -167,17 +161,15 @@ public class DoubleArray<V> implements Serializable {
 		return true;
 	}
 
-	public boolean hasChildren(int s) {
-		int base;
-		int c, max_c;
+	public boolean hasChildren(int s) ｛
 
-		base = getBase(s);
+		int base = getBase(s);
 		if (TRIE_INDEX_ERROR == base || base < 0)
 			return false;
 
-		max_c = Math.min(AlphabetFactory.getAlphabet().subAlphLength(s),
+		int max_c = Math.min(AlphabetFactory.getAlphabet().subAlphLength(s),
 				TRIE_INDEX_MAX - base);
-		for (c = 0; c < max_c; c++) {
+		for (int c = 0; c < max_c; c++) {
 			if (getCheck(base + c) == s)
 				return true;
 		}
@@ -204,8 +196,9 @@ public class DoubleArray<V> implements Serializable {
 	 *         that it assumes that no such arc exists before inserting.
 	 */
 	public int insertBranch(int s, int c) {
-		int base, next;
-		base = getBase(s);
+
+		int next;
+		int base = getBase(s);
 
 		if (base > 0) {
 			next = base + c;
@@ -252,13 +245,11 @@ public class DoubleArray<V> implements Serializable {
 	}
 
 	private void relocateBase(int s, int new_base) {
-		int old_base;
-		int i;
 
-		old_base = getBase(s);
+		int old_base = getBase(s);
 		ListInt symbols = findAllChildren(s);
 
-		for (i = 0; i < symbols.size(); i++) {
+		for (int i = 0; i < symbols.size(); i++) {
 			int old_next = old_base + symbols.get(i);
 			int new_next = new_base + symbols.get(i);
 			int old_next_base = getBase(old_next);
@@ -296,13 +287,11 @@ public class DoubleArray<V> implements Serializable {
 	}
 
 	private int findFreeBase(ListInt children) {
-		int first_child;
-		
 
 		/* find first free cell that is beyond the first symbol */
-		first_child = children.get(0);
+		int first_child = children.get(0);
 		int s = -getCheck(FREE_LIST_HEAD);
-		while (s != FREE_LIST_HEAD && s < (int) first_child + DA_POOL_BEGIN) {
+		while (s != FREE_LIST_HEAD && s < first_child + DA_POOL_BEGIN) {
 			s = -getCheck(s);
 		}
 		if (s == FREE_LIST_HEAD) {
@@ -336,8 +325,8 @@ public class DoubleArray<V> implements Serializable {
 	 * @return
 	 */
 	private boolean fitAllChildren(int base, ListInt children) {
-		int i;
-		for (i = 0; i < children.size(); i++) {
+
+		for (int i = 0; i < children.size(); i++) {
 			int sym = children.get(i);
 
 			/*
@@ -356,14 +345,12 @@ public class DoubleArray<V> implements Serializable {
 	 * @return
 	 */
 	private ListInt findAllChildren(int s) {
-		int base;
-		int c, max_c;
 
 		ListInt children = ArrayListIntFactory.instance().newListInt();
-		base = getBase(s);
-		max_c = Math.min(AlphabetFactory.getAlphabet().subAlphLength(base),
+		int base = getBase(s);
+		int max_c = Math.min(AlphabetFactory.getAlphabet().subAlphLength(base),
 				TRIE_INDEX_MAX - base);
-		for (c = 0; c < max_c; c++) {
+		for (int c = 0; c < max_c; c++) {
 			if (getCheck(base + c) == s)
 				children.add(c);
 		}
