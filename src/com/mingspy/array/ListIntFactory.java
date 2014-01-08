@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with DoubleArrayTrie.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mingspy.modles;
+package com.mingspy.array;
 
 /**
  * Simple abstraction for a factory that produces <tt>IntegerList</tt>s.
  * 
  * @author Chris Gioran
  */
-public interface IListFactory {
+public interface ListIntFactory {
 
 	/**
 	 * Creates and returns an <tt>IntegerList</tt> with the implementation and
@@ -31,6 +31,5 @@ public interface IListFactory {
 	 * 
 	 * @return An <tt>IntegerList</tt> configured as per this factory object
 	 */
-	public IIntegerList getNewIntegerList();
-	public ValueList getNewValueList();
+	public ListInt newListInt();
 }

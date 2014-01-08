@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with DoubleArrayTrie.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mingspy.modles;
+package com.mingspy.dat;
 
 /**
  * The result of a search operation for a string in a trie.

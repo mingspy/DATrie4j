@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with DoubleArrayTrie.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mingspy.modles;
+package com.mingspy.array;
 
 /**
  * Implementation of a factory class for IntegerArrayLists. Holds
@@ -26,17 +26,18 @@ package com.mingspy.modles;
  * @author Chris Gioran
  *
  */
-public class ArrayListFactory implements IListFactory {
+public class ArrayListIntFactory implements ListIntFactory {
 
 	private final int initialCapacity;
 	private final int numerator;
 	private final int denominator;
 	private final int fixedInc;
+	private static final ArrayListIntFactory _instance = newInstance(16, 5, 4, 10);
 
 	/**
 	 * Private, for use by static factory methods.
 	 */
-	private ArrayListFactory(int initialCapacity, int numerator, int denominator, int fixedInc) {
+	private ArrayListIntFactory(int initialCapacity, int numerator, int denominator, int fixedInc) {
 		this.initialCapacity = initialCapacity;
 		this.numerator = numerator;
 		this.denominator = denominator;
@@ -54,30 +55,29 @@ public class ArrayListFactory implements IListFactory {
 	 * @param fixedInc
 	 * @return
 	 */
-	public static ArrayListFactory newInstance(int initialCapacity, int numerator, int denominator, int fixedInc) {
-		return new ArrayListFactory(initialCapacity, numerator, denominator, fixedInc);
+	public static ArrayListIntFactory newInstance(int initialCapacity, int numerator, int denominator, int fixedInc) {
+		return new ArrayListIntFactory(initialCapacity, numerator, denominator, fixedInc);
 	}
 
+	public static ArrayListIntFactory instance(){
+		return _instance;
+	}
 	/**
 	 * Creates and returns an <tt>IntegerListFactory</tt> that manufactures <tt>IntegerArrayList</tt>s
 	 * with an initial capacity of 16 and a growth factor of 5/4 + 10.
 	 * 
 	 * @return An IntegerArrayList with sensible defaults.
 	 */
-	public static ArrayListFactory newInstance() {
+	public static ArrayListIntFactory newInstance() {
 		return newInstance(16, 5, 4, 10);
 	}
 
 	/**
-	 * @see org.digitalstain.datrie.store.IntegerListFactory#getNewIntegerList()
+	 * @see org.digitalstain.datrie.store.IntegerListFactory#newListInt()
 	 */
-	public IIntegerList getNewIntegerList() {
-		return new IntegerArrayList(initialCapacity, numerator, denominator, fixedInc);
+	public ListInt newListInt() {
+		return new ArrayListInt(initialCapacity, numerator, denominator, fixedInc);
 	}
 
-	@Override
-	public ValueList getNewValueList() {
-		// TODO Auto-generated method stub
-		return new ValueList(initialCapacity, numerator, denominator, fixedInc);
-	}
+
 }

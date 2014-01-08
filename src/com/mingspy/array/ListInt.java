@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with DoubleArrayTrie.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mingspy.modles;
+package com.mingspy.array;
 
 /**
  * Simple interface defining the behaviour of something like but not
@@ -27,7 +27,7 @@ package com.mingspy.modles;
  * @author Chris Gioran
  *
  */
-public interface IIntegerList {
+public interface ListInt {
 
 	/**
 	 * Returns the number of values in this list.

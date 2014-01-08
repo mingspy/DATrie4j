@@ -1,8 +1,6 @@
-package com.mingspy;
+package com.mingspy.dat;
 
 import java.io.Serializable;
-
-import com.mingspy.modles.SearchResult;
 
 /**
  * Double array trie是一种用双数组实现的trie树。<br>

@@ -1,15 +1,51 @@
-package com.mingspy.modles;
+/*
+ * Copyright 2010 Christos Gioran
+ *
+ * This file is part of DoubleArrayTrie.
+ *
+ * DoubleArrayTrie is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DoubleArrayTrie is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with DoubleArrayTrie.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package com.mingspy.array;
 
 import java.util.Arrays;
 
-public class ValueList<V> {
+/**
+ * A bare bones Array List implementation specifically designed for storing
+ * integer values. It has half the memory requirements of an ArrayList&lt;Integer&gt;,
+ * no pointer dereferencing for fetching the values while maintaining the access speed
+ * of an ArrayList. It is perfect for creating create-once-read-many large lists of
+ * integers.
+ * It does not implement any of the Collections Framework interfaces, since this is
+ * not a library class but an underlying store for higher lever structures and the
+ * added code complexity was not necessary. It should be simple however to extend and
+ * add whatever methods you need. Obviously however, generics are out of the question.
+ * 
+ * Of course I have been influenced by the implementation in the Sun JDK but I have
+ * tried to keep true to myself. However, there aren't many ways to implement something
+ * as simple as an ArrayList.
+ * 
+ * @author Chris Gioran
+ */
+public class ArrayListInt implements ListInt {
+
 	private final int INCREASE_RATIO_NUMERATOR;
 
 	private final int INCREASE_RATIO_DENOMINATOR;
 	
 	private final int FIXED_INCREASE;
 
-	private Object[] data;
+	private int[] data;
 
 	/**
 	 * The size of this ArrayList.
@@ -19,7 +55,7 @@ public class ValueList<V> {
 	/**
 	 * Constructs an empty list with an default capacity
 	 */
-	public ValueList() {
+	public ArrayListInt() {
 		this(16);
 	}
 
@@ -31,7 +67,7 @@ public class ValueList<V> {
 	 * @exception IllegalArgumentException
 	 *                if the specified initial capacity is negative
 	 */
-	public ValueList(int initialCapacity) {
+	public ArrayListInt(int initialCapacity) {
 		this(initialCapacity, 1, 1, 1000);
 	}
 
@@ -49,10 +85,10 @@ public class ValueList<V> {
 	 * @param incRatioDenom The denominator of the capacity increase fraction
 	 * @param fixedInc The fixed value added after the multiplication
 	 */
-	ValueList(int initialCapacity, int incRatioNom, int incRatioDenom, int fixedInc) {
+	ArrayListInt(int initialCapacity, int incRatioNom, int incRatioDenom, int fixedInc) {
 		if (initialCapacity < 0)
 			throw new IllegalArgumentException("Negative capacity specified " + initialCapacity);
-		this.data = new Object[initialCapacity];
+		this.data = new int[initialCapacity];
 		this.INCREASE_RATIO_NUMERATOR = incRatioNom;
 		this.INCREASE_RATIO_DENOMINATOR = incRatioDenom;
 		this.FIXED_INCREASE = fixedInc;
@@ -75,39 +111,57 @@ public class ValueList<V> {
 		}
 	}
 
-	
+	/**
+	 * @see org.ListInt.datrie.store.IntegerList#size()
+	 */
+	@Override
 	public int size() {
 		return size;
 	}
 
-
+	/**
+	 * @see org.ListInt.datrie.store.IntegerList#isEmpty()
+	 */
+	@Override
 	public boolean isEmpty() {
 		return size == 0;
 	}
 
-	
-	public V get(int index) {
+	/**
+	 * @see org.ListInt.datrie.store.IntegerList#get(int)
+	 */
+	@Override
+	public int get(int index) {
 		checkValidIndex(index);
-		return (V)data[index];
+		return data[index];
 	}
 
-	
-	public V set(int index, V value) {
+	/**
+	 * @see org.ListInt.datrie.store.IntegerList#set(int, int)
+	 */
+	@Override
+	public int set(int index, int value) {
 		checkValidIndex(index);
 
-		Object oldValue = data[index];
+		int oldValue = data[index];
 		data[index] = value;
-		return (V)oldValue;
+		return oldValue;
 	}
 
-
-	public boolean add(V value) {
+	/**
+	 * @see org.ListInt.datrie.store.IntegerList#add(int)
+	 */
+	@Override
+	public boolean add(int value) {
 		ensureCapacity(size + 1);
 		data[size++] = value;
 		return true;
 	}
 
-
+	/**
+	 * @see org.ListInt.datrie.store.IntegerList#add(int, int)
+	 */
+	@Override
 	public void add(int index, int value) {
 		if (index > size || index < 0)
 			throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
@@ -118,10 +172,13 @@ public class ValueList<V> {
 		size++;
 	}
 
-	
-	public V remove(int index) {
+	/**
+	 * @see org.ListInt.datrie.store.IntegerList#remove(int)
+	 */
+	@Override
+	public int remove(int index) {
 		checkValidIndex(index);
-		V oldValue = (V)data[index];
+		int oldValue = data[index];
 		int numMoved = size - index - 1;
 		if (numMoved > 0) {
 			System.arraycopy(data, index + 1, data, index, numMoved);
@@ -149,7 +206,7 @@ public class ValueList<V> {
 		StringBuilder sb = new StringBuilder();
 		sb.append('[');
 		for (int i = 0; i < size(); i++) {
-			V e = get(i);
+			int e = get(i);
 			sb.append(e);
 			if (i == size() - 1)
 				sb.append(']').toString();
