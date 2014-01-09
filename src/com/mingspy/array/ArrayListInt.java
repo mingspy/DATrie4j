@@ -68,7 +68,7 @@ public class ArrayListInt implements ListInt {
 	 *                if the specified initial capacity is negative
 	 */
 	public ArrayListInt(int initialCapacity) {
-		this(initialCapacity, 1, 1, 1000);
+		this(initialCapacity, 5, 4, 1);
 	}
 
 	/**
@@ -213,5 +213,23 @@ public class ArrayListInt implements ListInt {
 			sb.append(", ");
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public ListInt subList(int i) {
+		ArrayListInt newList = null;
+		if(i >= 0 && i < size()){
+			newList = new ArrayListInt(size() - i);
+			for(;i < size; i++){
+				newList.add(get(i));
+			}
+		}
+		return newList;
+	}
+
+	@Override
+	public int capability() {
+		// TODO Auto-generated method stub
+		return data != null?data.length:0;
 	}
 }

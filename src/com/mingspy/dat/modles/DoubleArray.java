@@ -7,13 +7,13 @@ import com.mingspy.alpha.AlphabetFactory;
 import com.mingspy.array.ArrayListIntFactory;
 import com.mingspy.array.ListInt;
 
-public class DoubleArray<V> implements Serializable {
+public class DoubleArray implements Serializable {
 
-	private static final int TRIE_INDEX_ERROR = 0; 
 	private static final int DA_ROOT = 2; // root address
-	private static final int DA_POOL_BEGIN = 3; // 
+	private static final int DA_POOL_BEGIN = 3; //
 	private static final int DA_SIGNATURE = 0xabcdef0;
 	private static final long serialVersionUID = 4112653922277428101L;
+	
 	/**
 	 * The address of free list header.<br>
 	 * As r1r2...ri...rm are m free cells.<br>
@@ -27,13 +27,12 @@ public class DoubleArray<V> implements Serializable {
 	 * check[ri] = -1<br>
 	 */
 	private static final int FREE_LIST_HEAD = 1; //
-	
+
 	// How many cell it call allocate.
 	private static final int TRIE_INDEX_MAX = 0x0fffffff;
 
 	private int[] base;
 	private int[] check;
-	//private Object[] data;
 
 	public DoubleArray() {
 		init();
@@ -43,42 +42,37 @@ public class DoubleArray<V> implements Serializable {
 
 		base = new int[DA_POOL_BEGIN];
 		check = new int[DA_POOL_BEGIN];
-		//data = new Object[DA_POOL_BEGIN];
-		base[0] = DA_SIGNATURE;   // mark of datrie
+		base[0] = DA_SIGNATURE; // mark of datrie
 		check[0] = DA_POOL_BEGIN; // number of cells
-		base[1] = -1; // address of last free cell 
+		base[1] = -1; // address of last free cell
 		check[1] = -1; // address of first free cell
 		base[2] = DA_POOL_BEGIN; // set root's base at DA_POOL_BEGIN
 		check[2] = 0; //
 	}
 
-	public int getRoot(){
-		return DA_ROOT;
+	public long getMemoryUsed(){
+		return base.length * 2 * 4;
 	}
 	
-	private int getBase(int position) {
-		return position < base.length ? base[position] : TRIE_INDEX_ERROR;
+	public int getRoot() {
+		return DA_ROOT;
+	}
+
+	public int getBase(int position) {
+		return position < base.length ? base[position] : Constants.TRIE_INDEX_ERROR;
 	}
 
 	private int getCheck(int position) {
-		return position < check.length ? check[position] : TRIE_INDEX_ERROR;
+		return position < check.length ? check[position] : Constants.TRIE_INDEX_ERROR;
 	}
 
-	private void setBase(int position, int value) {
+	public void setBase(int position, int value) {
 		base[position] = value;
 	}
 
 	private void setCheck(int position, int value) {
 		check[position] = value;
 	}
-
-//	private V getData(int index) {
-//		return index < data.length ? (V) data[index] : null;
-//	}
-//
-//	private void setData(int position, V value) {
-//		data[position] = value;
-//	}
 
 	public boolean isWorkable(int s, int c) {
 		return getCheck(getBase(s) + c) == s;
@@ -94,11 +88,11 @@ public class DoubleArray<V> implements Serializable {
 	 * @param c
 	 * @return
 	 */
-	public boolean walk(Integer s, int c) {
+	public boolean walk(IntState s, int c) {
 
-		int next = getBase(s) + c;
-		if (getCheck(next) == s) {
-			s = next;
+		int next = getBase(s.getState()) + c;
+		if (getCheck(next) == s.getState()) {
+			s.setState(next);
 			return true;
 		}
 		return false;
@@ -140,7 +134,7 @@ public class DoubleArray<V> implements Serializable {
 		int new_begin = base.length;
 		base = Arrays.copyOf(base, to_index + 1);
 		check = Arrays.copyOf(check, to_index + 1);
-		//data = Arrays.copyOf(data, to_index + 1);
+		// data = Arrays.copyOf(data, to_index + 1);
 
 		/* initialize new free list */
 		for (int i = new_begin; i < to_index; i++) {
@@ -157,14 +151,15 @@ public class DoubleArray<V> implements Serializable {
 
 		/* update header cell */
 		check[0] = to_index + 1;
+		base[0] = to_index + 1;
 
 		return true;
 	}
 
-	public boolean hasChildren(int s) ｛
+	public boolean hasChildren(int s) {
 
 		int base = getBase(s);
-		if (TRIE_INDEX_ERROR == base || base < 0)
+		if (Constants.TRIE_INDEX_ERROR == base || base < 0)
 			return false;
 
 		int max_c = Math.min(AlphabetFactory.getAlphabet().subAlphLength(s),
@@ -191,8 +186,8 @@ public class DoubleArray<V> implements Serializable {
 	 * 
 	 * @return the index of the new node
 	 * 
-	 *         Insert a new arc labelled with character @a c from the trie node
-	 *         represented by index @a s in double-array structure @a d. Note
+	 *         Insert a new arc labelled with character  c from the trie node
+	 *         represented by index  s in double-array structure  d. Note
 	 *         that it assumes that no such arc exists before inserting.
 	 */
 	public int insertBranch(int s, int c) {
@@ -219,21 +214,21 @@ public class DoubleArray<V> implements Serializable {
 				new_base = findFreeBase(symbols);
 				symbols = null;
 
-				if (TRIE_INDEX_ERROR == new_base)
-					return TRIE_INDEX_ERROR;
+				if (Constants.TRIE_INDEX_ERROR == new_base)
+					return Constants.TRIE_INDEX_ERROR;
 
 				relocateBase(s, new_base);
 				next = new_base + c;
 			}
 		} else {
 			int new_base;
-			ListInt symbols = ArrayListIntFactory.instance().newListInt();
+			ListInt symbols = ArrayListIntFactory.newListInt();
 			symbols.add(c);
 			new_base = findFreeBase(symbols);
 			symbols = null;
 
-			if (TRIE_INDEX_ERROR == new_base)
-				return TRIE_INDEX_ERROR;
+			if (Constants.TRIE_INDEX_ERROR == new_base)
+				return Constants.TRIE_INDEX_ERROR;
 
 			setBase(s, new_base);
 			next = new_base + c;
@@ -297,7 +292,7 @@ public class DoubleArray<V> implements Serializable {
 		if (s == FREE_LIST_HEAD) {
 			for (s = first_child + DA_POOL_BEGIN;; ++s) {
 				if (!extendPool(s))
-					return TRIE_INDEX_ERROR;
+					return Constants.TRIE_INDEX_ERROR;
 				if (getCheck(s) < 0)
 					break;
 			}
@@ -308,7 +303,7 @@ public class DoubleArray<V> implements Serializable {
 			/* extend pool before getting exhausted */
 			if (-getCheck(s) == FREE_LIST_HEAD) {
 				if (!extendPool(base.length))
-					return TRIE_INDEX_ERROR;
+					return Constants.TRIE_INDEX_ERROR;
 			}
 
 			s = -getCheck(s);
@@ -320,6 +315,7 @@ public class DoubleArray<V> implements Serializable {
 
 	/**
 	 * Check if the base can save all children.
+	 * 
 	 * @param base
 	 * @param children
 	 * @return
@@ -341,12 +337,13 @@ public class DoubleArray<V> implements Serializable {
 
 	/**
 	 * Find all children of s.<br>
+	 * 
 	 * @param s
 	 * @return
 	 */
 	private ListInt findAllChildren(int s) {
 
-		ListInt children = ArrayListIntFactory.instance().newListInt();
+		ListInt children = ArrayListIntFactory.newListInt();
 		int base = getBase(s);
 		int max_c = Math.min(AlphabetFactory.getAlphabet().subAlphLength(base),
 				TRIE_INDEX_MAX - base);
@@ -356,5 +353,45 @@ public class DoubleArray<V> implements Serializable {
 		}
 
 		return children;
+	}
+
+	/**
+	 * @brief Prune the single branch
+	 * 
+	 * @param d
+	 *            : the double-array structure
+	 * @param s
+	 *            : the dangling state to prune off
+	 * 
+	 *            Prune off a non-separate path up from the final state  s. If 
+	 *            s still has some children states, it does nothing. Otherwise,
+	 *            it deletes the node and all its parents which become
+	 *            non-separate.
+	 */
+	public void prune(int s) {
+		pruneUpto(getRoot(), s);
+	}
+
+	/**
+	 * @brief Prune the single branch up to given parent
+	 * 
+	 * @param d
+	 *            : the double-array structure
+	 * @param p
+	 *            : the parent up to which to be pruned
+	 * @param s
+	 *            : the dangling state to prune off
+	 * 
+	 *            Prune off a non-separate path up from the final state  s to
+	 *            the given parent  p. The prunning stop when either the
+	 *            parent  p is met, or a first non-separate node is found.
+	 */
+	public void pruneUpto(int p, int s) {
+		while (p != s && !hasChildren(s)) {
+			int parent;
+			parent = getCheck(s);
+			freeCell(s);
+			s = parent;
+		}
 	}
 }

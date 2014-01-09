@@ -1,8 +1,8 @@
 package com.mingspy.alpha;
 
-import com.mingspy.alpha.IAlphabet;
+import com.mingspy.alpha.Alphabet;
 
-public class RoughAlphabet implements IAlphabet {
+public class RoughAlphabet extends Alphabet {
 
 	/**
 	 * In Unicode Chinese start from 0x4e00 to 0x952f.<br>
@@ -24,12 +24,14 @@ public class RoughAlphabet implements IAlphabet {
 		return -1;
 	}
 
+
 	@Override
-	public int[] getInnerCodes(String str) {
-		int [] ret = new int[str.length()];
+	protected int[] translate(String str) {
+		int [] ret = new int[str.length() + 1];
 		for(int i = 0; i < str.length(); i++){
 			ret[i] = getInnerCode(str.charAt(i));
 		}
+		ret[ret.length - 1] = 0;
 		return ret;
 	}
 

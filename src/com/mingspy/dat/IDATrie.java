@@ -37,7 +37,7 @@ public abstract interface IDATrie<V> extends Serializable {
 	 * @param key 关键字
 	 * @return true：包含，false：不存在。
 	 */
-	public SearchResult containsPrefix(String key);
+	public boolean containsPrefix(String key);
 	
 	
 }

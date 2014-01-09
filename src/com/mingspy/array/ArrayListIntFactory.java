@@ -23,61 +23,29 @@ package com.mingspy.array;
  * the configuration for creating ArrayLists for <tt>int</tt>s with
  * specified initial size and growth characteristics.
  * 
- * @author Chris Gioran
  *
  */
-public class ArrayListIntFactory implements ListIntFactory {
+public class ArrayListIntFactory {
 
-	private final int initialCapacity;
-	private final int numerator;
-	private final int denominator;
-	private final int fixedInc;
-	private static final ArrayListIntFactory _instance = newInstance(16, 5, 4, 10);
-
-	/**
-	 * Private, for use by static factory methods.
-	 */
-	private ArrayListIntFactory(int initialCapacity, int numerator, int denominator, int fixedInc) {
-		this.initialCapacity = initialCapacity;
-		this.numerator = numerator;
-		this.denominator = denominator;
-		this.fixedInc = fixedInc;
-	}
-
-	/**
-	 * Creates and returns an <tt>IntegerListFactory</tt> that manufactures <tt>IntegerArrayList</tt>s
-	 * with an initial capacity of <tt>initialCapacity</tt> and a growth factor of <p>
-	 * <tt>numerator/denominator + fixedInc</tt>
-	 * 
-	 * @param initialCapacity The initialCapacity of the Array
-	 * @param numerator
-	 * @param denominator
-	 * @param fixedInc
-	 * @return
-	 */
-	public static ArrayListIntFactory newInstance(int initialCapacity, int numerator, int denominator, int fixedInc) {
-		return new ArrayListIntFactory(initialCapacity, numerator, denominator, fixedInc);
-	}
-
-	public static ArrayListIntFactory instance(){
-		return _instance;
-	}
-	/**
-	 * Creates and returns an <tt>IntegerListFactory</tt> that manufactures <tt>IntegerArrayList</tt>s
-	 * with an initial capacity of 16 and a growth factor of 5/4 + 10.
-	 * 
-	 * @return An IntegerArrayList with sensible defaults.
-	 */
-	public static ArrayListIntFactory newInstance() {
-		return newInstance(16, 5, 4, 10);
-	}
+	private static final int initialCapacity = 0;
+	private static final int numerator = 5;
+	private static final int denominator = 4;
+	private static final int fixedInc = 1;
 
 	/**
 	 * @see org.digitalstain.datrie.store.IntegerListFactory#newListInt()
 	 */
-	public ListInt newListInt() {
+	public static ListInt newListInt() {
 		return new ArrayListInt(initialCapacity, numerator, denominator, fixedInc);
 	}
-
+	
+	public static ListInt newListInt(int [] array, int from) {
+		ListInt list = new ArrayListInt(array.length - from, numerator, denominator, fixedInc);
+		for(int i = from; i < array.length; i++){
+			list.add(array[i]);
+		}
+		
+		return list;
+	}
 
 }

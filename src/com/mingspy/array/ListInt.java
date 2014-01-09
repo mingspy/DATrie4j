@@ -35,6 +35,8 @@ public interface ListInt {
 	 * @return the number of values in this list
 	 */
 	public abstract int size();
+	
+	public abstract int capability();
 
 	/**
 	 * Returns <tt>true</tt> if this list contains no values.
@@ -93,5 +95,7 @@ public interface ListInt {
 	 * @throws IndexOutOfBoundsException
 	 */
 	public abstract int remove(int index);
+
+	public abstract ListInt subList(int i);
 
 }
