@@ -32,6 +32,8 @@ public abstract interface IDATrie<V> extends Serializable {
 	 */
 	public V find(String key);
 	
+	public V retrieve(int[] keys, int start, int end);
+	
 	/**
 	 * 判断是否包含key或者以key开始的前缀。
 	 * @param key 关键字

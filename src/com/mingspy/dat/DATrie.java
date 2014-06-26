@@ -105,12 +105,16 @@ public class DATrie<V> implements IDATrie<V> {
 	 *         associated to key.
 	 */
 	private V retrieve(int[] key) {
+		return retrieve(key,0,key.length);
+	}
+	
+	public V retrieve(int [] keys, int start, int end){
 		int p;
 		/* walk through branches */
 		IntState s = new IntState(da.getRoot());
-		int i = 0;
-		for (; i < key.length && !isSeparate(s.getState()); i++) {
-			p = key[i];
+		int i = start;
+		for (; i < end && !isSeparate(s.getState()); i++) {
+			p = keys[i];
 			if (!da.walk(s, p)) {
 				return null;
 			}
@@ -121,8 +125,8 @@ public class DATrie<V> implements IDATrie<V> {
 		/* walk through tail */
 		s.setState(getTailIndex(s.getState()));
 		IntState suffix_idx = new IntState(0);
-		for (; i < key.length; i++) {
-			p = key[i];
+		for (; i < end; i++) {
+			p = keys[i];
 			if (!tail.walkChar(s.getState(), suffix_idx, p)) {
 				return null;
 			}
