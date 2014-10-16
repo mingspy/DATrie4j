@@ -138,8 +138,8 @@ public class DoubleArray implements Serializable {
 
 		/* initialize new free list */
 		for (int i = new_begin; i < to_index; i++) {
-			setCheck(i, -(i + 1));
-			setBase(i + 1, -i);
+			setCheck(i, -(i + 1)); // 设置下一个可用单元
+			setBase(i + 1, -i);  // 设置前一个个可用单元
 		}
 
 		/* merge the new circular list to the old */

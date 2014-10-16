@@ -23,4 +23,10 @@ public class IntState{
 		state ++;
 	}
 
+	@Override
+	public String toString() {
+		return state+"";
+	}
+
+	
 }

@@ -1,13 +1,17 @@
 package test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+
+import org.junit.Test;
 
 import com.mingspy.dat.DATrie;
 import com.mingspy.dat.IDATrie;
 
-public class TestTrie extends TestCase{
+public class TestTrie{
+	@Test
 	public void testAdd(){
 		IDATrie<String> trie = new DATrie<String>();
+		/*
 		trie.add("12", "12");
 		trie.add("1", "1");
 		trie.add("13", "13");
@@ -22,7 +26,25 @@ public class TestTrie extends TestCase{
 		assertTrue(!trie.containsPrefix("154"));
 		assertTrue(trie.containsPrefix("12"));
 		trie.add("1", "1111");
-		assertEquals("1111", trie.find("1"));	
+		assertEquals("1111", trie.find("1"));
+		*/
+		for (int i = 0; i < 2000; i++){
+			String w = "word"+i;
+			trie.add(w, w);
+			String v = trie.find(w);
+			if(v == null){
+				System.out.println("null at "+ i);
+				break;
+			}else if(!v.equals(w)){
+				System.out.println(v+"not equal key "+ w);
+				break;
+			}
+		}
+		
+		String t = trie.find("word1111");
+		assertEquals("word1111", t);
+		
+			
 	}
 	
 	public void testDelete(){

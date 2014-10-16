@@ -271,17 +271,14 @@ public class DATrie<V> implements IDATrie<V> {
 
 		// when run here, all equals prefix are added.
 		// save old left suffix.
+		int new_i = i;
 		if (0 != p)
 			++i;
 		tail.setSuffix(old_tail, old_suffix.subList(i));
 		setTailIndex(old_da, old_tail);
 
 		// insert new added suffix to state s.
-		if(i == suffix.length){
-			i --;
-		}
-		
-		int [] new_suffix = Arrays.copyOfRange(suffix, i, suffix.length);
+		int [] new_suffix = Arrays.copyOfRange(suffix, new_i, suffix.length);
 		/* insert the new branch at the new separate point */
 		return branchInBranch(s, new_suffix, data);
 
